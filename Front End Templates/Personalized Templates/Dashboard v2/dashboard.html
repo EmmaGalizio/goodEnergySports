@@ -1,0 +1,356 @@
+<!doctype html>
+<html style="height: 100%">
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+        <link href="css/styles.css" rel="stylesheet" />
+        
+        <title>Sidebar</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        <script>
+            
+            window.onload = function(){
+                $('#modalFormulario').modal('show');
+            }
+        </script>
+        
+    
+    </head>
+    
+    
+    <body style="height: 100%"> 
+        
+             
+                
+        
+               
+        <div class="container-fluid h-100">
+            <div class="row" style="border: 3px solid black">
+                
+                
+                <div class="col-12 p-0 m-0">
+                    <header class="header">
+                        <nav class="navbar navbar-toggleable-md navbar-light pt-0 pb-0 ">
+                            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <a class="navbar-brand p-0 mr-5" href="#"><img src="http://via.placeholder.com/61x14"></a>
+                            <div class="float-left"> <a href="#" class="button-left"><span class="fa fa-fw fa-bars "></span></a> </div>
+                            <div class="collapse navbar-collapse flex-row-reverse" id="navbarNavDropdown">
+                                <ul class="navbar-nav">
+                                    <li class="nav-item dropdown messages-menu">
+                                        <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-bell-o"></i>
+                                            <span class="label label-success bg-success">10</span>
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                            <ul class="dropdown-menu-over list-unstyled">
+                                                <li class="header-ul text-center">You have 4 messages</li>
+                                                <li>
+                                                    <!-- inner menu: contains the actual data -->
+                                                    <ul class="menu list-unstyled">
+                                                        <li><!-- start message -->
+                                                            <a href="#">
+                                                                <div class="pull-left">
+                                                                    <img src="http://via.placeholder.com/160x160" class="rounded-circle  " alt="User Image">
+                                                                </div>
+                                                                <h4>
+                                                                    Support Team
+                                                                    <small><i class="fa fa-clock-o"></i> 5 mins</small>
+                                                                </h4>
+                                                                <p>Why not buy a new awesome theme?</p>
+                                                            </a>
+                                                        </li>
+                                                        <!-- end message -->
+
+                                                    </ul>
+                                                </li>
+                                                <li class="footer-ul text-center"><a href="#">See All Messages</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="nav-item dropdown notifications-menu">
+                                        <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-envelope-o"></i>
+                                            <span class="label label-warning bg-warning">10</span>
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink1">
+                                            <ul class="dropdown-menu-over list-unstyled">
+                                                <li class="header-ul text-center">You have 10 notifications</li>
+                                                <li>
+                                                    <!-- inner menu: contains the actual data -->
+                                                    <ul class="menu list-unstyled">
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                                                            </a>
+                                                        </li>
+
+
+                                                    </ul>
+                                                </li>
+                                                <li class="footer-ul text-center"><a href="#">View all</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+
+                                    <li class="nav-item dropdown  user-menu">
+                                        <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <img src="http://via.placeholder.com/160x160" class="user-image" alt="User Image" >
+                                            <span class="hidden-xs">bootstrap develop</span>
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
+                                            <a class="dropdown-item" href="#">Action</a>
+
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </header>
+                
+                </div>
+            
+            
+            </div>
+            <!--Termina la fila del nav bar-->
+            
+            <!-- Empieza la fila que debe ocupar todo el alto (contenido del dashboard-->
+            <div class="row h-100 flex-grow-1" style="border: 3px solid green">
+                <div class="column" style="border: 3px solid red">
+                    <div class="main h-100">
+                        <aside class="flex-grow-1 h-100">
+                            <div class="sidebar left" style="height: 100%">
+                                <div class="user-panel">
+                                    <div class="pull-left image">
+                                        <img src="http://via.placeholder.com/160x160" class="rounded-circle" alt="User Image">
+                                    </div>
+                                    <div class="pull-left info">
+                                        <p>bootstrap develop</p>
+                                        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                                    </div>
+                                </div>
+                                <ul class="list-sidebar bg-defoult">
+                                    <li> <a href="#" data-toggle="collapse" data-target="#dashboard" class="collapsed active" > <i class="fa fa-th-large"></i> <span class="nav-label"> Dashboards </span> <span class="fa fa-chevron-left pull-right"></span> </a>
+                                        <ul class="sub-menu collapse" id="dashboard">
+                                            <li class="active"><a href="#">CSS3 Animation</a></li>
+                                            <li><a href="#">General</a></li>
+                                            </ul>
+                                    </li>
+                                    <li> <a href="#"><i class="fa fa-diamond"></i> <span class="nav-label">Layouts</span></a> </li>
+                                    <li> <a href="#" data-toggle="collapse" data-target="#products" class="collapsed active" > <i class="fa fa-bar-chart-o"></i> <span class="nav-label">Graphs</span> <span class="fa fa-chevron-left pull-right"></span> </a>
+                                        <ul class="sub-menu collapse" id="products">
+                                            <li class="active"><a href="#">CSS3 Animation</a></li>
+                                            <li><a href="#">General</a></li>
+
+                                        </ul>
+                                    </li>
+                                    <li> <a href="#"><i class="fa fa-laptop"></i> <span class="nav-label">Grid options</span></a> </li>
+                                    <li> <a href="#" data-toggle="collapse" data-target="#tables" class="collapsed active" ><i class="fa fa-table"></i> <span class="nav-label">Tables</span><span class="fa fa-chevron-left pull-right"></span></a>
+                                        <ul  class="sub-menu collapse" id="tables" >
+                                            <li><a href=""> Static Tables</a></li>
+                                            <li><a href=""> Data Tables</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </aside>
+                    </div>                    
+                
+                </div>
+                
+                <div class="column flex-fill" style="border: 3px solid orange">
+                    
+                    <div class="container-fluid col-12 justify-content-center">
+                        <div class="row mb-2">
+                            <div class="alert alert-success alert-dismissible fade show col-12 m-0 pb-0" role="alert">
+                                <p class="p-0 m-0">Todo piola amegoooo!!!!!! AAAAAAAAAAAAAA</p>
+                                <button type="button" class="close pb-0 pt-0" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="row" style="border: 1px solid yellow">
+                            
+                            <div class="column col-md-4 col-sm-6" style="border: 1px solid black">
+                                <div class="card align-items-center" style="border: 1px solid red">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Categorias</h5>                                            
+                                        </div>
+                                    </div>                             
+                            </div>
+                            
+                             <div class="column col-md-4 col-sm-6" style="border: 1px solid violet">
+                                 <div class="card align-items-center" style="border: 1px solid red">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Productos</h5>
+                                            
+                                           
+                                        </div>
+                                    </div>                                                             
+                            </div>
+                            
+                            <div class="column col-md-4 col-sm-6" style="border: 1px solid violet">
+                                <div class="card align-items-center" style="border: 1px solid red">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Pedidos</h5>                                            
+                                        </div>
+                                    </div>                            
+                            </div>
+                            
+                            <div class="column col-md-4 col-sm-6" style="border: 1px solid violet">
+                                <div class="card align-items-center" style="border: 1px solid red">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Clientes</h5>
+                                            
+                                        
+                                        </div>
+                                    </div>
+                                                                
+                            
+                            </div>
+                                  
+                        </div>                    
+                    </div>
+                    
+                </div> 
+                 <div class="modal fade" data-backdrop="static" id="modalFormulario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Modificar Categoria</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form >
+                                    <div class="form-group row">
+                                        <label for="idCategoriaMod" class="col-sm-2 col-form-label">Id:</label>
+                                        <div class="col-sm-10">
+                                            <input 
+                                                   type="text" readonly class="form-control-plaintext" id="idCategoriaMod">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="nombreCategoria" class="col-sm-2 col-form-label">Nombre</label>
+                                        <div class="col-sm-10">
+                                            <input 
+                                                   type="text" class="form-control" id="nombreCategoria">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>                
+        </div>
+        
+        
+                
+                   
+                        
+
+                             <!--
+                            ===================================
+                            Acá Empieza el sidebar
+                            ==================================
+                                         
+                    <div class="main">
+                        <aside>
+                            <div class="sidebar left" style="height: 100%">
+                                <div class="user-panel">
+                                    <div class="pull-left image">
+                                        <img src="http://via.placeholder.com/160x160" class="rounded-circle" alt="User Image">
+                                    </div>
+                                    <div class="pull-left info">
+                                        <p>bootstrap develop</p>
+                                        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                                    </div>
+                                </div>
+                                <ul class="list-sidebar bg-defoult">
+                                    <li> <a href="#" data-toggle="collapse" data-target="#dashboard" class="collapsed active" > <i class="fa fa-th-large"></i> <span class="nav-label"> Dashboards </span> <span class="fa fa-chevron-left pull-right"></span> </a>
+                                        <ul class="sub-menu collapse" id="dashboard">
+                                            <li class="active"><a href="#">CSS3 Animation</a></li>
+                                            <li><a href="#">General</a></li>
+                                            </ul>
+                                    </li>
+                                    <li> <a href="#"><i class="fa fa-diamond"></i> <span class="nav-label">Layouts</span></a> </li>
+                                    <li> <a href="#" data-toggle="collapse" data-target="#products" class="collapsed active" > <i class="fa fa-bar-chart-o"></i> <span class="nav-label">Graphs</span> <span class="fa fa-chevron-left pull-right"></span> </a>
+                                        <ul class="sub-menu collapse" id="products">
+                                            <li class="active"><a href="#">CSS3 Animation</a></li>
+                                            <li><a href="#">General</a></li>
+
+                                        </ul>
+                                    </li>
+                                    <li> <a href="#"><i class="fa fa-laptop"></i> <span class="nav-label">Grid options</span></a> </li>
+                                    <li> <a href="#" data-toggle="collapse" data-target="#tables" class="collapsed active" ><i class="fa fa-table"></i> <span class="nav-label">Tables</span><span class="fa fa-chevron-left pull-right"></span></a>
+                                        <ul  class="sub-menu collapse" id="tables" >
+                                            <li><a href=""> Static Tables</a></li>
+                                            <li><a href=""> Data Tables</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </aside>
+                    </div>
+                        <!--
+                        =================
+                        Fin Sidebar
+                        ================
+                        -->                            
+                        
+                    
+                                
+                
+                <!--
+                    ===========================
+                    Inicio Dashboard
+                    ===================
+                                     
+
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Card title</h5>
+                                            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                            <a href="#" class="btn btn-primary">Button</a>
+                                        </div>
+                                    </div>
+                                    
+                                                                        
+                                   
+                                    <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Card title</h5>
+                                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                                <a href="#" class="btn btn-primary">Button</a>
+                                            </div>
+                                        
+                                    </div>
+                                    
+                <!--Fin Dashboard-->
+                
+             
+            
+           
+       
+    
+    
+    
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+        
+        <script type="text/javascript" src="js/script.js"></script>
+        
+    </body>
+
+</html>

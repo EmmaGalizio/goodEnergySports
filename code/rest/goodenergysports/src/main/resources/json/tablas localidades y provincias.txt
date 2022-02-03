@@ -1,0 +1,17 @@
+alter table domicilio drop constraint domicilio_localidad_fk;
+drop table localidad;
+drop table provincia;
+create table provincia(
+	id_provincia INT(4) PRIMARY KEY auto_increment,
+    nombre VARCHAR(60) NOT NULL
+);
+create table localidad(
+	id_localidad INT(5) PRIMARY KEY auto_increment,
+    nombre VARCHAR(60) NOT NULL,
+    codigo_postal INT(5),
+    provincia INT(4) NOT NULL,
+    CONSTRAINT localidad_provincia_fk FOREIGN KEY(provincia) REFERENCES provincia(id_provincia)
+);
+alter table domicilio drop column localidad;
+alter table domicilio add column localidad INT(5);
+alter table domicilio add constraint domicilio_localidad_fk FOREIGN KEY(localidad) REFERENCES localidad(id_localidad);

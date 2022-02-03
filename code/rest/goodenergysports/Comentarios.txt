@@ -1,0 +1,35 @@
+CategoriaEntityMapper.mapToEntity : No debiera hacer falta el mapeo de negocio a entity de la categoria superior,
+no sería bueno actualizar todo me parece. Linea 32, borrar despues de testear si veo que no hace falta
+----------------------------------------------------------------------------------------------------
+ELIMINAR:
+RestController ProductoImageStorageService y SubResourceTest
+-----------------------------------------------------------
+MODIFICAR!
+LA CATEGORIA NO SE PUEDE DAR DE BAJA A NO SER QUE NO TENGA NINGUN PRODUCTO ACTIVO!!
+--------------------------------------------------------
+
+Manejo de Excepciones:
+
+A partir de Spring 3
+Usar metodo con annotation @ControllerAdvice, permite utilizar un método para multiples excepciones, incluso
+personalizadas. Permite control total del cuerpo de la respuesta http mediante objetos de la clase
+ResponseEntity<T>, que a su vez tiene metodos que retornan objetos del tipo ResponseEntity.BodyBuilder,
+que permite general el cuerpo de la peticion.
+https://www.baeldung.com/exception-handling-for-rest-with-spring
+https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/ResponseEntity.html
+https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/ResponseEntity.BodyBuilder.html
+
+Otra opcion (menos recomendada aunque más nueva, a partir de Spring 5)
+https://www.baeldung.com/spring-response-status-exception
+---------------------------------------------------------------------------
+
+https://docs.spring.io/spring-hateoas/docs/current/reference/html/
+Link assembler
+---------------------------------------------------------------------
+En caso de ser necesario incluir hipervinculos hacia otros recursos relacionados con el recurso al que
+se está accediendo, pero no se quiere mezclar la lógica de negocio de estos recursos (ejemplo pedidos u órdenes)
+se puede registrar un RepresentationModelProcessor<RepresentationModel<T>> para que se encargue automáticamente
+de añadir los hipervínculos automáticamente. Este processor se registra como un bean en una clase de configuración.
+Cuando se accede a un recurso del tipo RepresentationModel<T>, Spring automáticamente ejecuta el processor
+para poder añadirle el link, entonces de esa forma en el controlador del recurso del tipo T nos podemos
+concentrar solo en su lógica de negocio, y los links adicionales los añade el processor.

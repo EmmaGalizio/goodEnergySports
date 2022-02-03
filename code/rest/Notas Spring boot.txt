@@ -1,0 +1,25 @@
+- Cuando el scope de un bean es singleton, retorna siempre la misma intancia, pero cada vez que se inyecta se crea un nuevo hilo de ejecución
+es por eso que un bean singleton no debe tener un estado (atributos que no sean otros beans singleton) debido a que los atributos se almacenan
+en el heap (compartido por todos los hilos de la instancia) y no en el stack (se crea una llamada al stack por cada hilo en la que se esté
+ejecutando el bean), por lo que si un bean singleton tiene un estado (atributos) este va a estar compartido por todos los hilos lo que puede
+romper la aplicacion (sus datos).
+
+..............................................................
+Se puede inyectar un bean del tipo Evironment en sprong boot que contiene información del entorno de la aplicacion.
+Entre otras cosas, se pueden obtener las propiedades declaradas en el archivo application.properties.
+@Autowired
+private Environment env
+
+public .... metodo(){
+	env.getPropertie("nombre_propiedad");
+}
+------------------------------------------------
+Se puede hacer que spring guarde los beans en cache para evitar procesamientos costosos como consultas repetitivas
+a bases de datos. Para esto simplemente se debe decorar el recurso o componente a cachear con @Cacheable(value="nombre_cache").
+Obviamente, si se produce alguna modificacion de estos recursos es necesario actualizar la cache, por lo que existe
+la annotation @CachEvict(value="", allEtries=true) que permite borrar todos los elementos de una determinada cache, esta
+annotation se coloca en los métodos destinados a modificar los recursos cacheados.
+----------------------------------------------------------------------------------------------
+Inyectar beans prototype dentro de beans singleton
+https://www.baeldung.com/spring-inject-prototype-bean-into-singleton
+@Lookup annotation

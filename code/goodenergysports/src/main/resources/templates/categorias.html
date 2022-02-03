@@ -1,0 +1,229 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="es" style="height: 100%">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <div th:replace="components/bootstrapStyles"></div>
+        <link th:href="@{css/sideBarStyles/styles.css}" rel="stylesheet" />
+
+        <!--FontAwesome dice que el kit debe ir aca-->
+        <script src="https://kit.fontawesome.com/ca002ee79b.js" crossorigin="anonymous"></script>
+
+        <title>Admin - Good Energy Sports</title>
+
+        <div th:if="${newCategoria || (updateOrSavecategoria != null && updateOrSavecategoria.idCategoria != null)}">
+            <script>
+                window.onload = function(){
+                    $('#modalFormulario').modal('show');
+                }
+            </script>
+
+        </div>
+
+    </head>
+
+    <body style="height: 100%" >
+    <!--<div th:if="${newCategoria || updateOrSavecategoria.idCategoria != null}"> -->
+
+    <!--</div>-->
+
+
+        <div class="container-fluid h-100">
+            <div class="row" style="border: 3px solid black">
+
+                <div class="col-12 p-0 m-0">
+                    <div th:replace="components/admin/adminNavBar"></div>
+                </div>
+
+            </div>
+            <!--Termina la fila del nav bar-->
+
+            <!-- Empieza la fila que debe ocupar todo el alto (contenido del dashboard-->
+
+
+            <div class="row h-100 flex-grow-1">
+                <div class="column" >
+
+                    <div th:replace="components/admin/adminSideBar"></div>
+
+                </div>
+
+                <!--Dentro de este div se encuentra el contenido del dashboard, segunda columna de la
+                segunda fila de la grilla de bootstrap-->
+                <div class="column flex-fill" style="border: 3px solid orange">
+                    <div class="container-fluid col-12 justify-content-center">
+                        
+                        <div th:if="${error}" class="row mb-2">
+                            <div class="alert alert-danger alert-dismissible fade show col-12 m-0 pb-0" role="alert">
+                                <p class="p-0 m-0" th:text="${error}"></p>
+                                <button type="button" class="close pb-0 pt-0" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div th:if="${success}" class="row mb-2">
+                            <div class="alert alert-success alert-dismissible fade show col-12 m-0 pb-0" role="alert">
+                                <p class="p-0 m-0" th:text="${success}"></p>
+                                <button type="button" class="close pb-0 pt-0" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!--Este div debe contener los estilos del titulo de la tabla del crud-->
+                            <div class="justify-content-around">
+                                <div class="">
+                                    <h4>Categorias</h4>
+                                </div>
+                                <div class="">
+
+                                        <a th:href="@{/admin/categoria(newCategoria=true)}">
+                                            <button class="btn btn-success p-1" style="border-radius: 100%" type="button">
+                                                <i class="fa fa-plus-circle"></i>
+                                            </button>
+                                        </a>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" scope="col">ID</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Descripción</th>
+                                        <th class="text-center" scope="col">Categoría Superior</th>
+                                        <th class="text-center" scope="col">Fecha de Baja</th>
+                                        <th scope="col">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="categoria:${categorias}" class="pb-0 pt-0">
+
+                                        <th class="text-center" scope="row" th:text="${categoria.idCategoria}"></th>
+                                        <td th:text="${categoria.nombre}"></td>
+                                        <td th:text="${categoria.descripcion}"></td>
+                                        <td class="text-center" th:text="${categoria.nombreCategoriaSuperior} ?: '-'"></td>
+                                        <td class="text-center" th:text="${categoria.fechaBaja ?: '-'}"></td>
+                                        <td class="p-1">
+                                            <a th:href="@{/admin/categoria(id=${categoria.idCategoria})}">
+                                                <button type="button" class="btn btn-primary p-1" data-toggle="modal" data-target="#modalFormulario">
+                                                    <i class="far fa-edit"></i>
+                                                </button>
+                                            </a>
+                                            <form class="p-0 m-0" th:action="@{/admin/categoria/baja}" th:method="delete">
+                                                <input type="hidden" name="id" th:value="${categoria.idCategoria}">
+
+                                                <button type="submit" class="btn btn-primary p-1">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+
+                                            </form>
+
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <!-- Formulario Registro y Modificacion modal -->
+                <div class="modal fade" data-backdrop="static" id="modalFormulario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Modificar Categoria</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form th:object="${updateOrSavecategoria}" th:action="@{/admin/categoria}" th:method="post">
+                                    <div class="form-group row">
+                                        <label for="idCategoriaMod" class="col-sm-2 col-form-label">Id:</label>
+                                        <div class="col-sm-10">
+                                            <input th:value="${updateOrSavecategoria.idCategoria}"
+                                                   th:field="${updateOrSavecategoria.idCategoria}"
+                                                   type="text" readonly class="form-control-plaintext" id="idCategoriaMod">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="nombreCategoriaModal" class="col-sm-2 col-form-label">Nombre</label>
+                                        <div class="col-sm-10">
+                                            <input th:value="${updateOrSavecategoria.nombre}"
+                                                   th:field="${updateOrSavecategoria.nombre}"
+                                                   type="text" class="form-control" id="nombreCategoriaModal">
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="descripcionModal" class="col-sm-2 col-form-label">Descripcion</label>
+                                        <div class="col-sm-10">
+                                            <textarea th:value="${updateOrSavecategoria.descripcion}"
+                                                      th:field="${updateOrSavecategoria.descripcion}"
+                                                      type="text" class="form-control" id="descripcionModal" rows="3"></textarea>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="categoriaSuperiorModal" class="col-sm-2 col-form-label">Categoria Superior:</label>
+                                        <select class="form-control" id="categoriaSuperiorModal" th:field="*{idCategoriaSuperior}">
+                                            <option th:value="null">Seleccione una Categoria</option>
+                                            <div th:each="catSup:${categorias}">
+                                                <option th:if="${(catSup.idCategoriaSuperior == null && catSup.fechaBaja== null)}"
+                                                        th:value="${catSup.idCategoria}" th:text="${catSup.nombre}"></option>
+                                            </div>
+
+                                        </select>
+
+                                    </div>
+                                    <div class="form-group row" th:if="${updateOrSavecategoria.fechaBaja != null}">
+                                        <label for="fechaBajaModal" class="col-sm-2 col-form-label">Fecha de Baja</label>
+                                        <div class="col-sm-6">
+                                            <input th:value="${updateOrSavecategoria.fechaBaja}"
+                                                   th:field="${updateOrSavecategoria.fechaBaja}"
+                                                   type="text" readonly class="form-control" id="fechaBajaModal">
+                                        </div>
+                                        <div class="form-check col-sm-3">
+                                            <label class="form-check-label text-nowrap" for="chkRegistrarBajaModal">
+                                                Dar de Baja:
+                                            </label>
+                                            <input
+                                                    th:value="${updateOrSavecategoria.bajaRegistrada}"
+                                                    th:field="${updateOrSavecategoria.bajaRegistrada}"
+                                                    class="form-check-input col-sm-1" type="checkbox" id="chkRegistrarBajaModal">
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Guardar</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- Button trigger modal -->
+
+
+
+        <div th:replace="components/bootstrapScripts"></div>
+        <script type="text/javascript" th:src="@{js/sideBarScript/script.js}"></script>
+
+    </body>
+</html>

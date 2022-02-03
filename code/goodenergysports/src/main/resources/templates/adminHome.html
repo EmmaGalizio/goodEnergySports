@@ -1,0 +1,89 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" style="height: 100%">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <div th:replace="components/bootstrapStyles"></div>
+        <link th:href="@{css/sideBarStyles/styles.css}" rel="stylesheet" />
+        <title>Admin - Good Energy Sports</title>
+
+    </head>
+    <body style="height: 100%">
+
+
+        <div class="container-fluid h-100">
+            <div class="row" style="border: 3px solid black">
+
+                <div class="col-12 p-0 m-0">
+                    <div th:replace="components/admin/adminNavBar"></div>
+                </div>
+
+
+            </div>
+            <!--Termina la fila del nav bar-->
+
+            <!-- Empieza la fila que debe ocupar todo el alto (contenido del dashboard-->
+            <div class="row h-100 flex-grow-1" style="border: 3px solid green">
+                <div class="column" style="border: 3px solid red">
+
+                    <div th:replace="components/admin/adminSideBar"></div>
+
+                </div>
+
+                <!--Dentro de este div se encuentra el contenido del dashboard, segunda columna de la
+                segunda fila de la grilla de bootstrap-->
+                <div class="column flex-fill" style="border: 3px solid orange">
+                    <div class="container-fluid col-12 justify-content-center">
+                        <div class="row" style="border: 1px solid yellow">
+
+                            <div class="column col-md-4 col-sm-6" style="border: 1px solid black">
+                                <a th:href="@{/admin/categoria}">
+                                    <div class="card align-items-center" style="border: 1px solid red">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Categorias</h5>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="column col-md-4 col-sm-6" style="border: 1px solid violet">
+                                <div class="card align-items-center" style="border: 1px solid red">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Productos</h5>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="column col-md-4 col-sm-6" style="border: 1px solid violet">
+                                <div class="card align-items-center" style="border: 1px solid red">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Pedidos</h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="column col-md-4 col-sm-6" style="border: 1px solid violet">
+                                <div class="card align-items-center" style="border: 1px solid red">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Clientes</h5>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div th:replace="components/bootstrapScripts"></div>
+        <script type="text/javascript" th:src="@{js/sideBarScript/script.js}"></script>
+    </body>
+</html>
