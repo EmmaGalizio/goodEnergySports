@@ -44,6 +44,13 @@ public class Stock {
         return fechaBaja == null;
     }
 
+    public boolean esTalleActivo(){
+        return talle.estaActivo();
+    }
+    public boolean tieneStock(){
+        return stockDisponible > 0;
+    }
+
     public void registrarBaja(){
         if(fechaBaja != null){
             DomainException domainException = new DomainException("El ítem ya se encuentra inactivo");

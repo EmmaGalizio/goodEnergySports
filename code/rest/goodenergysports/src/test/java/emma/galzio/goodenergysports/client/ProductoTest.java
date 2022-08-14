@@ -1,6 +1,6 @@
 package emma.galzio.goodenergysports.client;
 
-import emma.galzio.goodenergysports.productos.client.utils.ProductoSpecification;
+import emma.galzio.goodenergysports.productos.commons.persistence.filter.ProductoSpecification;
 import emma.galzio.goodenergysports.productos.commons.persistence.entity.CategoriaEntity;
 import emma.galzio.goodenergysports.productos.commons.persistence.entity.ProductoEntity;
 import emma.galzio.goodenergysports.productos.commons.persistence.repository.CategoriaEntityRepository;

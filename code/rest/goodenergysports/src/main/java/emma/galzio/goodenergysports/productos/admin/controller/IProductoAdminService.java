@@ -4,13 +4,14 @@ import emma.galzio.goodenergysports.productos.admin.transferObject.ImagenProduct
 import emma.galzio.goodenergysports.productos.admin.transferObject.ProductoAdminDto;
 import emma.galzio.goodenergysports.productos.commons.domain.Producto;
 import emma.galzio.goodenergysports.productos.commons.persistence.entity.ProductoEntity;
+import emma.galzio.goodenergysports.productos.commons.utils.ProductoFilter;
 
 import java.util.List;
 
 public interface IProductoAdminService {
     ProductoAdminDto createNewProducto(ProductoAdminDto producto);
 
-    List<ProductoAdminDto> listAllProductos(boolean active, Integer page, Integer size, ProductoAdminService.ORDER order, Integer categoria);
+    List<ProductoAdminDto> listAllProductos(boolean active, Integer page, Integer size, ProductoFilter productoFilter);
 
     ProductoAdminDto findProducto(Integer codigo);
 

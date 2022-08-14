@@ -5,10 +5,16 @@ import emma.galzio.goodenergysports.productos.admin.api.TalleAdminRestController
 import emma.galzio.goodenergysports.productos.admin.api.ProductoAdminRestController;
 import emma.galzio.goodenergysports.productos.admin.controller.ProductoAdminService;
 import emma.galzio.goodenergysports.productos.admin.transferObject.TalleAdminDto;
+import emma.galzio.goodenergysports.productos.client.api.ProductoRestController;
 import emma.galzio.goodenergysports.productos.commons.domain.Talle;
+import emma.galzio.goodenergysports.productos.commons.utils.ProductoFilter;
 import emma.galzio.goodenergysports.utils.exception.DomainException;
 import emma.galzio.goodenergysports.utils.mapper.TransferMapper;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.UriTemplate;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
@@ -31,12 +37,16 @@ public class TalleCategoriaTransferMapper implements TransferMapper<TalleAdminDt
     }
 
     private void addDtoLinks(Talle business, TalleAdminDto dto){
-
         dto.add(linkTo(methodOn(TalleAdminRestController.class, business.getIdCategoriaTalle(), business.getTalle()).findTalle(business.getIdCategoriaTalle(), business.getTalle())).withSelfRel());
         dto.add(linkTo(CategoriaAdminRestController.class).slash(business.getIdCategoriaTalle()).withRel("categoria"));
-        dto.add(linkTo(methodOn(ProductoAdminRestController.class)
-                .listAllProductos(1,10, ProductoAdminService.ORDER.DEFAULT
-                        ,true, business.getIdCategoriaTalle())).withRel("productos_categoria"));
+        ProductoFilter productoFilter = new ProductoFilter();
+        productoFilter.setCategoria(business.getIdCategoriaTalle());
+        //Agregar link a metodo con un POJO como query parameter
+        WebMvcLinkBuilder linkBuilder = linkTo(methodOn(ProductoAdminRestController.class).listAllProductos(null,null,false,productoFilter));
+        UriComponentsBuilder uriBuilder = linkBuilder.toUriComponentsBuilder();
+        uriBuilder.replaceQueryParam("categoria", business.getIdCategoriaTalle());
+        Link productosCategoriaLink = Link.of(UriTemplate.of(uriBuilder.build().toString()),"productos_categoria");
+        dto.add(productosCategoriaLink);
     }
 
 

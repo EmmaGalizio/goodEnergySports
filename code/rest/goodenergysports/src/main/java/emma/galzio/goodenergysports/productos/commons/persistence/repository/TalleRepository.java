@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public interface TalleRepository extends JpaRepository<TalleEntity, TalleEntityId> {
@@ -24,5 +25,9 @@ public interface TalleRepository extends JpaRepository<TalleEntity, TalleEntityI
     @Modifying
     @Query("UPDATE TalleEntity t SET t.fechaBaja=?1 WHERE t.id=?2")
     void registrarBaja(LocalDate localDate, TalleEntityId talleEntityId);
+
+    List<TalleEntity> findByCategoriaAndId_TalleIn(CategoriaEntity categoria, Collection<String> talles);
+
+
 
 }

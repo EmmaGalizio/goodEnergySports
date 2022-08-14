@@ -3,12 +3,14 @@ package emma.galzio.goodenergysports.productos.admin.transferObject;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import lombok.ToString;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDate;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@ToString
 public class CategoriaAdminDto extends RepresentationModel<CategoriaAdminDto> {
 
     private Integer idCategoria;

@@ -10,6 +10,7 @@ import emma.galzio.goodenergysports.utils.mapper.EntityMapper;
 import emma.galzio.goodenergysports.utils.mapper.TransferMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -93,9 +94,14 @@ public class CategoriaAdminService implements ICategoriaAdminService {
             throw domainException;
         }
         CategoriaEntity categoriaEntity = categoriaEntityMapper.mapToEntity(categoria);
-        categoriaEntity = categoriaEntityRepository.save(categoriaEntity);
+        try {
+            categoriaEntity = categoriaEntityRepository.save(categoriaEntity);
+        }catch(DataIntegrityViolationException e){
+            DomainException domainException = new DomainException("Categoría repetida");
+            domainException.addCause("NOMBRE_CATEGORIA", "Ya existe una categoría registrada llamada "+categoria.getNombre());
+            throw domainException;
+        }
         return categoriaTransferMapper.mapToDto(categoriaEntityMapper.mapToBusiness(categoriaEntity));
-
     }
 
     @Override
@@ -120,6 +126,11 @@ public class CategoriaAdminService implements ICategoriaAdminService {
         }
         Categoria categoria = categoriaTransferMapper.mapToBusiness(categoriaAdminDto);
         if(!categoria.esCategoriaValida()) return null;
+        if(categoria.estaActiva() && categoria.esCategoriaHija() && !categoria.getCategoriaSuperior().estaActiva()){
+            DomainException domainException = new DomainException("Categoria superior inactiva: "+categoria.getCategoriaSuperior().getNombre());
+            domainException.addCause("CATEGORIA_SUPERIOR", "No es posible dar de alta una categoría cuya categoría superior se encuentra inactiva");
+            throw domainException;
+        }
         CategoriaEntity categoriaEntity = categoriaEntityMapper.mapToEntity(categoria);
         categoriaEntity = categoriaEntityRepository.save(categoriaEntity);
         categoria = categoriaEntityMapper.mapToBusiness(categoriaEntity);
@@ -149,5 +160,18 @@ public class CategoriaAdminService implements ICategoriaAdminService {
             throw domainException;
         }
 
+    }
+
+    @Override
+    public Categoria getCategoriaBusiness(Integer id) {
+        if(id == null) return null;
+        CategoriaEntity categoriaEntity = categoriaEntityRepository.getById(id);
+        try{
+            return categoriaEntityMapper.mapToBusiness(categoriaEntity);
+        }catch(EntityNotFoundException e){
+            DomainException domainException = new DomainException();
+            domainException.addCause("CATEGORIA", "No existe una categoría registrada con el ID: "+id);
+            throw domainException;
+        }
     }
 }

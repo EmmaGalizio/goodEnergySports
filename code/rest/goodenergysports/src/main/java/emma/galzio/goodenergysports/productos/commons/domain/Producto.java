@@ -112,6 +112,9 @@ public class Producto {
             if(metadata == null) metadata = new Hashtable<>();
         }
     }
+    public boolean esDeCategoriaActiva(){
+        return categoria.estaActiva();
+    }
 
     public String getMetedataForKey(String key){
         if(metadata != null && metadata.containsKey(key)){
@@ -258,6 +261,8 @@ public class Producto {
             Stock stockItemActual = stockIterator.next();
             Stock stockItemAntiguo = stockAntiguoMap.get(stockItemActual.getTalle().getTalle());
             if(stockItemAntiguo == null) continue;
+            //Está bien porque si bien es posible ver los productos con stock inactivo mientras haya en existencia
+            //No es posible modificar la cantidad en stock de un talle inactivo
             if(!stockItemAntiguo.getTalle().estaActivo() || !stockItemAntiguo.estaActivo()){
                 stockIterator.remove();
                 todosItemsValidos = false;
@@ -296,6 +301,11 @@ public class Producto {
     }
     public Stock buscarItemStock(String talle){
         return stock.stream().filter(stockItem -> stockItem.esDeTalle(talle)).findFirst().orElse(null);
+    }
+
+    public void eliminarStockInactivo(){
+        if(stock == null) return;
+        stock.removeIf(stock -> (!stock.estaActivo() || !stock.esTalleActivo()) && !stock.tieneStock());
     }
 
 }

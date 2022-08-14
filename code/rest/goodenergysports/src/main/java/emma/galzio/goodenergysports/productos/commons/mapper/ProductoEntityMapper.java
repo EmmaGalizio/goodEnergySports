@@ -171,12 +171,13 @@ public class ProductoEntityMapper implements EntityMapper<ProductoEntity, Produc
 
     @Override
     public List<ProductoEntity> mapAllToEntity(List<Producto> businessList) {
-        return null;
+        if(businessList == null || businessList.isEmpty()) return null;
+        return businessList.stream().map(this::mapToEntity).collect(Collectors.toList());
     }
 
     @Override
     public List<Producto> mapAllToBusiness(List<ProductoEntity> entityList) {
-        if(entityList == null || entityList.isEmpty()) throw  new DomainException("No existen Productos con las características especificadas");
+        if(entityList == null || entityList.isEmpty()) return null;
         return entityList.stream().map(this::mapToBusiness).collect(Collectors.toList());
     }
 }

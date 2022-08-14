@@ -1,0 +1,13 @@
+Nombre docker container: mysqldb
+Creacion del contenedor: docker container run -d --name mysqldb -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password mysql:latest
+
+Iniciacion del contenedor: 
+sudo docker start mysqldb
+sudo docker exec -it mysqldb bash
+
+Ip docker container: 172.17.0.2
+
+INICIAR CONTENEDOR ANTES DE CONECTAR
+
+detencion del contenedor:
+sudo docker stop mysqldb

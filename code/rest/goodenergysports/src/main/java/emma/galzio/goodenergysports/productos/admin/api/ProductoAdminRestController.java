@@ -2,6 +2,8 @@ package emma.galzio.goodenergysports.productos.admin.api;
 import emma.galzio.goodenergysports.productos.admin.controller.IProductoAdminService;
 import emma.galzio.goodenergysports.productos.admin.controller.ProductoAdminService;
 import emma.galzio.goodenergysports.productos.admin.transferObject.ProductoAdminDto;
+import emma.galzio.goodenergysports.productos.commons.utils.ProductoFilter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.PagedModel;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/admin/producto")
+@Slf4j
 public class ProductoAdminRestController {
 
     @Autowired
@@ -39,14 +42,11 @@ public class ProductoAdminRestController {
     public PagedModel<ProductoAdminDto> listAllProductos(
             @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "10")Integer size,
-            @RequestParam(name = "sort", required = false) ProductoAdminService.ORDER order,
             @RequestParam(name = "active", required = false, defaultValue = "false")boolean active,
-            @RequestParam(name = "categoria", required = false)Integer categoria){
+            ProductoFilter productoFilter){
 
-        if(order == null) order = ProductoAdminService.ORDER.DEFAULT;
-
-        List<ProductoAdminDto> productos = IProductoAdminService.listAllProductos(active,page,size,order, categoria);
-        Integer productCount = IProductoAdminService.countProducts(active, categoria);
+        List<ProductoAdminDto> productos = IProductoAdminService.listAllProductos(active,page,size,productoFilter);
+        Integer productCount = IProductoAdminService.countProducts(active, productoFilter.getCategoria());
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, productCount);
         PagedModel<ProductoAdminDto> pagedModel = PagedModel.of(productos, pageMetadata);
         pagedModel.add(linkTo(this.getClass()).slash("sortOption").withRel("ordenamiento"));

@@ -5,8 +5,11 @@ import emma.galzio.goodenergysports.productos.commons.persistence.repository.Cat
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
@@ -49,9 +52,21 @@ public class CategoriaRepositoryTest {
         System.out.println(categoriaEntityList);
     }
 
-    @Test
+    //@Test
     public void testFindCategoriaSuperior(){
         CategoriaEntity categoriaEntity = repository.findCategoriaSuperior(2);
         System.out.println("Nombre: " + categoriaEntity.getNombre() + " ID: " + categoriaEntity.getIdCategoria());
+    }
+
+
+    @Transactional
+    @Test
+    public void testNombreUniqueConstraintViolation(){
+        CategoriaEntity categoriaEntity = new CategoriaEntity();
+        categoriaEntity.setNombre("Calzas");
+        assertThatExceptionOfType(DataIntegrityViolationException.class).isThrownBy(
+                ()-> repository.save(categoriaEntity)
+        );
+
     }
 }

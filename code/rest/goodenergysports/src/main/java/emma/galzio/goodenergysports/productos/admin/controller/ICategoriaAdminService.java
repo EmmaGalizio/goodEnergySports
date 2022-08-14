@@ -1,6 +1,7 @@
 package emma.galzio.goodenergysports.productos.admin.controller;
 
 import emma.galzio.goodenergysports.productos.admin.transferObject.CategoriaAdminDto;
+import emma.galzio.goodenergysports.productos.commons.domain.Categoria;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -22,4 +23,7 @@ public interface ICategoriaAdminService {
 
     @Transactional
     CategoriaAdminDto disableCategoria(Integer idCategoria);
+
+    @Transactional
+    Categoria getCategoriaBusiness(Integer id);
 }

@@ -35,6 +35,10 @@ public class CategoriaEntityMapper implements EntityMapper<CategoriaEntity, Cate
                                 .findCategoriaSuperior(business.getIdCategoriaSuperior()));
             }
         }
+        if(business.tieneHijasActivas()){
+            categoriaEntity.setSubCategorias(business.getSubCategorias()
+                    .stream().map(this::mapToEntity).collect(Collectors.toList()));
+        }
 
         return categoriaEntity;
     }

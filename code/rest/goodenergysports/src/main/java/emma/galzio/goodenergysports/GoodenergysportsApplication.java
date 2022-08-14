@@ -2,7 +2,16 @@ package emma.galzio.goodenergysports;
 
 
 import emma.galzio.goodenergysports.clientes.domain.Usuario;
+import emma.galzio.goodenergysports.clientes.persistence.entity.LocalidadEntity;
+import emma.galzio.goodenergysports.clientes.persistence.entity.ProvinciaEntity;
 import emma.galzio.goodenergysports.clientes.persistence.entity.UsuarioEntity;
+import emma.galzio.goodenergysports.clientes.persistence.repository.LocalidadEntityRepository;
+import emma.galzio.goodenergysports.localidadesService.Localidad;
+import emma.galzio.goodenergysports.localidadesService.LocalidadesIndecParser;
+import emma.galzio.goodenergysports.localidadesService.Provincia;
+import emma.galzio.goodenergysports.productos.admin.initializationController.ProductoInitializerController;
+import emma.galzio.goodenergysports.productos.admin.initializationController.CategoriaInitializationController;
+import emma.galzio.goodenergysports.productos.admin.transferObject.CategoriaAdminDto;
 import emma.galzio.goodenergysports.security.discovering.ApplicationContextResourcesDiscoveringService;
 import emma.galzio.goodenergysports.security.discovering.ResourcesDiscoveringService;
 import emma.galzio.goodenergysports.security.domain.Permiso;
@@ -25,10 +34,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @SpringBootApplication
@@ -48,26 +57,71 @@ public class GoodenergysportsApplication {
     @Autowired
     private PermisoEntityMapper permisoEntityToBusinessMapper;
     @Autowired
+    private LocalidadEntityRepository localidadRepository;
+    @Autowired
     private Environment environment;
     @Autowired
     private UsuarioRepository usuarioRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-
-
-
-    //private Map<Integer,ProvinciaEntity> provinciasMap;
+    @Autowired
+    private CategoriaInitializationController categoriaInitializationController;
+    @Autowired
+    private ProductoInitializerController productoInitializerController;
 
     public static void main(String[] args) {
         SpringApplication.run(GoodenergysportsApplication.class, args);
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    public void obtenerEndpointsExpuestos(){
-        if(Arrays.asList(environment.getActiveProfiles()).contains("test")) return;
+    public void applicationReadyListener(){
+        //this.almacenarLocalidades();
 
-        //No me gusta el nombre ResourceDiscoveringService para algo que lista y almacena
+        //this.cargarEndpointsExpuestos();
+        //this.cargarEndpointsExpuestos();
+        this.verificarUsuarioAdmin();
+        //this.inicializarCategorias();
+        //productoInitializerController.loadProductosFromJson("/json/productos.json");
+
+    }
+
+    private void inicializarCategorias(){
+        List<CategoriaAdminDto> categorias = categoriaInitializationController
+                                .loadCategoriasFromJson("/json/categorias.json");
+        categorias = categoriaInitializationController.persistCategorias(categorias);
+        categorias.forEach(System.out::println);
+    }
+
+    //No importa el Listener que ponga, los permisos se cargan antes de que se exponga algun
+    //endpoint
+    //La unica forma seria cambiar el DiscoveringServices al de reflection
+    //@EventListener(ApplicationStartedEvent.class)
+    //public void obtenerEndpointsApplicationContext(){
+     //   this.cargarEndpointsExpuestos();
+    //}
+
+    @Transactional
+    public void almacenarLocalidades(){
+        LocalidadesIndecParser localidadesIndecParser = new LocalidadesIndecParser();
+        //List<Provincia> provincias = localidadesIndecParser.
+        //       parseProvincias("/json/provincias.json");
+        List<Localidad> localidades = localidadesIndecParser.parseLocalidades("/json/municipios.json");
+
+        //List<ProvinciaEntity> provinciaEntities = provincias.stream()
+        //       .map(GoodenergysportsApplication::mapToProvinciaEntity).collect(Collectors.toList());
+        //provinciaEntityRepository.saveAll(provinciaEntities);
+        log.info("Provincias almacenadas");
+        Map<Integer,ProvinciaEntity> provinciasMap = new HashMap<>();
+        List<LocalidadEntity> localidadEntities = localidades.stream()
+                .map((localidad)-> this.mapToLocalidadEntity(localidad,provinciasMap))
+                .collect(Collectors.toList());
+        localidadRepository.saveAll(localidadEntities);
+        log.info("Localidades almacenadas");
+    }
+
+    private void cargarEndpointsExpuestos(){
+        if(Arrays.asList(environment.getActiveProfiles()).contains("test")) return;
+        //No me gusta el nombre del servicio
         ResourcesDiscoveringService resourcesDiscoveringService = new ApplicationContextResourcesDiscoveringService(context,permisoRepository,permisoEntityMapper);
         //List<Permiso> permisos = resourcesDiscoveringService.almacenarPermisosDeRecursosExpuestos(basePath);
         List<Permiso> permisos = resourcesDiscoveringService.establecerPermisosAdmin(rolRepository,permisoEntityToBusinessMapper, basePath);
@@ -75,8 +129,6 @@ public class GoodenergysportsApplication {
         System.out.println("------------------------");
         System.out.println("Permisos Almacenados:");
         permisos.forEach(System.out::println);
-
-        this.verificarUsuarioAdmin();
 
     }
 
@@ -131,12 +183,12 @@ public class GoodenergysportsApplication {
 
     //Este código es horrible, si en algún momento pasa a producción es necesario implementar un servicio
     //que permita leer las localidades del archivo y almacenarlas
-   /* @Bean
+    /*@Bean
     @Transactional
     CommandLineRunner runner(ApplicationContext context, PermisoRepository permisoRepository, PermisoBusinessToEntityMapper permisoEntityMapper){
         return args ->{
 
-           /*
+
             LocalidadesIndecParser localidadesIndecParser = new LocalidadesIndecParser();
             //List<Provincia> provincias = localidadesIndecParser.
              //       parseProvincias("/json/provincias.json");
@@ -146,23 +198,24 @@ public class GoodenergysportsApplication {
              //       .map(GoodenergysportsApplication::mapToProvinciaEntity).collect(Collectors.toList());
             //provinciaEntityRepository.saveAll(provinciaEntities);
             log.info("Provincias almacenadas");
-            provinciasMap = new HashMap<>();
+            Map<Integer,ProvinciaEntity> provinciasMap = new HashMap<>();
             List<LocalidadEntity> localidadEntities = localidades.stream()
-                    .map(this::mapToLocalidadEntity).collect(Collectors.toList());
-            localidadEntityRepository.saveAll(localidadEntities);
+                    .map((localidad)-> this.mapToLocalidadEntity(localidad,provinciasMap))
+                    .collect(Collectors.toList());
+            localidadRepository.saveAll(localidadEntities);
             log.info("Localidades almacenadas");
 
         };
 
     }*/
-/*
+
     public ProvinciaEntity mapToProvinciaEntity(Provincia provincia){
         ProvinciaEntity provinciaEntity = new ProvinciaEntity();
-        provinciaEntity.setIdProvincia(provincia.getId());
+        provinciaEntity.setId(provincia.getId());
         provinciaEntity.setNombre(provincia.getIsoNombre().trim().toUpperCase());
         return provinciaEntity;
     }
-    public LocalidadEntity mapToLocalidadEntity(Localidad localidad){
+    public LocalidadEntity mapToLocalidadEntity(Localidad localidad, Map<Integer,ProvinciaEntity> provinciasMap){
         LocalidadEntity localidadEntity = new LocalidadEntity();
         //localidadEntity.setIdLocalidad(localidad.getId());
         localidadEntity.setNombre(localidad.getNombre().trim().toUpperCase());
@@ -178,8 +231,6 @@ public class GoodenergysportsApplication {
         localidadEntity.setProvincia(provinciaEntity);
         return localidadEntity;
     }
-
- */
 
 
 }

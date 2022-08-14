@@ -5,12 +5,14 @@ import emma.galzio.goodenergysports.productos.admin.api.ProductoAdminRestControl
 import emma.galzio.goodenergysports.productos.admin.api.StockProductoAdminRestController;
 import emma.galzio.goodenergysports.productos.admin.transferObject.ImagenProductoDto;
 import emma.galzio.goodenergysports.productos.admin.transferObject.ProductoAdminDto;
+import emma.galzio.goodenergysports.productos.client.api.ProductoRestController;
 import emma.galzio.goodenergysports.productos.commons.domain.Categoria;
 import emma.galzio.goodenergysports.productos.commons.domain.ImagenProducto;
 import emma.galzio.goodenergysports.productos.commons.domain.Producto;
 import emma.galzio.goodenergysports.productos.commons.domain.Stock;
 import emma.galzio.goodenergysports.productos.commons.persistence.entity.CategoriaEntity;
 import emma.galzio.goodenergysports.productos.commons.persistence.repository.CategoriaEntityRepository;
+import emma.galzio.goodenergysports.productos.commons.utils.ProductoFilter;
 import emma.galzio.goodenergysports.utils.exception.DomainException;
 import emma.galzio.goodenergysports.utils.mapper.EntityMapper;
 import emma.galzio.goodenergysports.utils.mapper.TransferMapper;
@@ -19,7 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.UriTemplate;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import javax.servlet.ServletContext;
@@ -72,20 +78,20 @@ public class ProductoAdminTransferMapper implements TransferMapper<ProductoAdmin
     }
 
     private void setAllproductosLink(Producto business, ProductoAdminDto productoAdminDto){
-        /*Link allProductos = linkTo(ProductoAdminRestController.class).withRel("productos");
-        allProductos = Affordances.of(allProductos).afford(HttpMethod.GET).withOutput(List.class)
-                .withName("productos")
-                .addParameters(QueryParameter.optional("page"),
-                        QueryParameter.optional("size"),
-                        QueryParameter.optional("active"),
-                        QueryParameter.optional("categoria").withValue(business.getCategoria().getIdCategoria().toString()),
-                        QueryParameter.optional("sort")).toLink();
-        productoAdminDto.add(allProductos);*/
 
         Link allProductos = linkTo(methodOn(ProductoAdminRestController.class).
-                listAllProductos(null,null,null,false, productoAdminDto.getIdCategoria()))
+                listAllProductos(null,null,false,null))
                 .withRel("productos");
         productoAdminDto.add(allProductos);
+
+        ProductoFilter productoFilter = new ProductoFilter();
+        productoFilter.setCategoria(productoAdminDto.getIdCategoria());
+        //Agregar link a metodo con un POJO como query parameter
+        WebMvcLinkBuilder linkBuilder = linkTo(methodOn(ProductoAdminRestController.class).listAllProductos(null,null,false,productoFilter));
+        UriComponentsBuilder uriBuilder = linkBuilder.toUriComponentsBuilder();
+        uriBuilder.replaceQueryParam("categoria", productoAdminDto.getIdCategoria());
+        Link productosCategoriaLink = Link.of(UriTemplate.of(uriBuilder.build().toString()),"productos_categoria");
+        productoAdminDto.add(productosCategoriaLink);
     }
 
     private void setDtoImages(Producto business, ProductoAdminDto productoAdminDto){
@@ -102,7 +108,6 @@ public class ProductoAdminTransferMapper implements TransferMapper<ProductoAdmin
             imagesList.add(imagenProductoDto);
         }
         productoAdminDto.setImagenes(imagesList);
-
     }
 
     private void setImageLinks(Producto producto, ProductoAdminDto productoAdminDto){

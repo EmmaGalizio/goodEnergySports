@@ -91,6 +91,12 @@
             <artifactId>reflections</artifactId>
             <version>0.10.2</version>
         </dependency>
+        <!--Herramienta para generar canoniacal metamodel classes-->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>5.6.5.Final</version>
+        </dependency>
 
     </dependencies>
 

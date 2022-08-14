@@ -9,6 +9,7 @@ import emma.galzio.goodenergysports.productos.commons.persistence.entity.*;
 import emma.galzio.goodenergysports.productos.commons.persistence.repository.CategoriaEntityRepository;
 import emma.galzio.goodenergysports.productos.commons.persistence.repository.ImagenProductoEntityRepository;
 import emma.galzio.goodenergysports.productos.commons.persistence.repository.ProductoRepository;
+import emma.galzio.goodenergysports.productos.commons.utils.ProductoFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -121,8 +122,11 @@ public class ProductoAdminTest {
     public void listAllProductosTest(){
 
         ProductoAdminService.ORDER order = ProductoAdminService.ORDER.MAYOR_PRECIO;
+        ProductoFilter productoFilter = new ProductoFilter();
+        productoFilter.setCategoria(1);
+        productoFilter.setSort(order);
 
-        List<ProductoAdminDto> productos = productoAdminService.listAllProductos(true,0,3, order,1);
+        List<ProductoAdminDto> productos = productoAdminService.listAllProductos(true,0,3,productoFilter);
 
     }
 

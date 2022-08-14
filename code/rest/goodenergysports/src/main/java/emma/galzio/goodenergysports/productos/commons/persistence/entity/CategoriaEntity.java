@@ -12,7 +12,7 @@ public class CategoriaEntity {
     @Column(name = "id_categoria")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idCategoria;
-    @Column
+    @Column(unique = true)
     private String nombre;
     @Column
     private String descripcion;

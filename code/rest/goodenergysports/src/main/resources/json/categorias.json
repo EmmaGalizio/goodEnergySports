@@ -1,0 +1,71 @@
+{
+	
+	"categorias":[
+		{
+			"idCategoria":null,
+			"nombre":"Calzas",
+			"descripcion":null,
+			"fechaBaja":null,
+			"categoriaSuperior":null
+		},
+		{
+			"idCategoria":null,
+			"nombre":"Remeras",
+			"descripcion":null,
+			"fechaBaja":null,
+			"categoriaSuperior":null
+		},
+		{
+			"idCategoria":null,
+			"nombre":"Buzos",
+			"descripcion":null,
+			"fechaBaja":null,
+			"categoriaSuperior":null
+		},
+		{
+			"idCategoria":null,
+			"nombre":"Tops",
+			"descripcion":null,
+			"fechaBaja":null,
+			"categoriaSuperior":null
+		},
+		{
+			"idCategoria":null,
+			"nombre":"Calzas cortas",
+			"descripcion":null,
+			"fechaBaja":null,
+			"categoriaSuperior":null
+		},
+		{
+			"idCategoria":null,
+			"nombre":"Calzas ciclista",
+			"descripcion":null,
+			"fechaBaja":null,
+			"categoriaSuperior":null
+		},
+		{
+			"idCategoria":null,
+			"nombre":"Sudaderas",
+			"descripcion":null,
+			"fechaBaja":null,
+			"categoriaSuperior":null
+		},
+		{
+			"idCategoria":null,
+			"nombre":"Musculosas",
+			"descripcion":null,
+			"fechaBaja":null,
+			"categoriaSuperior":null
+		},
+		{
+			"idCategoria":null,
+			"nombre":"Buzos Hoodie",
+			"descripcion":null,
+			"fechaBaja":null,
+			"categoriaSuperior":null
+		}		
+	
+	]
+	
+
+}

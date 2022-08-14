@@ -5,12 +5,18 @@ import emma.galzio.goodenergysports.productos.admin.api.TalleAdminRestController
 import emma.galzio.goodenergysports.productos.admin.api.ProductoAdminRestController;
 import emma.galzio.goodenergysports.productos.admin.controller.ProductoAdminService;
 import emma.galzio.goodenergysports.productos.admin.transferObject.CategoriaAdminDto;
+import emma.galzio.goodenergysports.productos.client.api.ProductoRestController;
 import emma.galzio.goodenergysports.productos.commons.domain.Categoria;
 import emma.galzio.goodenergysports.productos.commons.persistence.repository.CategoriaEntityRepository;
+import emma.galzio.goodenergysports.productos.commons.utils.ProductoFilter;
 import emma.galzio.goodenergysports.utils.mapper.TransferMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.UriTemplate;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import java.util.*;
@@ -67,12 +73,15 @@ public class CategoriaAdminTransferMaper implements TransferMapper<CategoriaAdmi
                                         .collect(Collectors.toList());
         categoriaAdminDto.add(subCategoriasLinks);
 
-        //categoriaAdminDto.add(linkTo(methodOn(ProductoAdminRestController.class)
-        //        .listAllProductos(1,10, ProductoAdminService.ORDER.DEFAULT,true, categoriaAdminDto.getIdCategoria()))
-        //        .withRel("productos_categoria"));
-        categoriaAdminDto.add(linkTo(methodOn(ProductoAdminRestController.class)
-                .listAllProductos(1,10, ProductoAdminService.ORDER.DEFAULT,false,categoriaAdminDto.getIdCategoria()))
-                .withRel("productos_categoria"));
+        ProductoFilter productoFilter = new ProductoFilter();
+        productoFilter.setCategoria(categoriaAdminDto.getIdCategoria());
+        //Agregar link a metodo con un POJO como query parameter
+        WebMvcLinkBuilder linkBuilder = linkTo(methodOn(ProductoAdminRestController.class)
+                                                .listAllProductos(null,null,false,productoFilter));
+        UriComponentsBuilder uriBuilder = linkBuilder.toUriComponentsBuilder();
+        uriBuilder.replaceQueryParam("categoria", categoriaAdminDto.getIdCategoria());
+        Link productosCategoriaLink = Link.of(UriTemplate.of(uriBuilder.build().toString()),"productos_categoria");
+        categoriaAdminDto.add(productosCategoriaLink);
 
         categoriaAdminDto.add(linkTo(methodOn(TalleAdminRestController.class)
                 .listAllTalles(categoriaAdminDto.getIdCategoria(),1,10,false)).withRel("talles"));
@@ -86,7 +95,10 @@ public class CategoriaAdminTransferMaper implements TransferMapper<CategoriaAdmi
         if(dto == null) throw new NullPointerException("La categoria no puede ser nula");
         Categoria categoria = new Categoria();
         categoria.setIdCategoria(dto.getIdCategoria());
-        categoria.setNombre(dto.getNombre());
+        String nombreStandard = dto.getNombre().toLowerCase();
+        Character firtChar = Character.toUpperCase(nombreStandard.charAt(0));
+        nombreStandard = nombreStandard.replaceFirst(Character.toString(nombreStandard.charAt(0)), firtChar.toString());
+        categoria.setNombre(nombreStandard);
         categoria.setDescripcion(dto.getDescripcion());
         categoria.setFechaBaja(dto.getFechaBaja());
         if(dto.getCategoriaSuperior() != null) {
@@ -120,7 +132,7 @@ public class CategoriaAdminTransferMaper implements TransferMapper<CategoriaAdmi
             CategoriaAdminDto categoriaAdminDto = this.mapToDto(categoria);
             categoriasDto.add(categoriaAdminDto);
             computedCategories.add(categoria.getIdCategoria());
-            if(categoria.esCategoriaPadre()){
+            if(categoria.tieneHijasActivas()){
                 //categoriaAdminDto.setSubCategorias(this.mapAllToDtoRecursive(computedCategories, categoria.getSubCategorias()));
             }
         }

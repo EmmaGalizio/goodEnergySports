@@ -2,17 +2,17 @@ package emma.galzio.goodenergysports.productos.admin.controller;
 
 import emma.galzio.goodenergysports.productos.admin.transferObject.ImagenProductoDto;
 import emma.galzio.goodenergysports.productos.admin.transferObject.ProductoAdminDto;
+import emma.galzio.goodenergysports.productos.commons.domain.Categoria;
 import emma.galzio.goodenergysports.productos.commons.domain.ImagenProducto;
 import emma.galzio.goodenergysports.productos.commons.domain.Producto;
 import emma.galzio.goodenergysports.productos.commons.domain.Talle;
-import emma.galzio.goodenergysports.productos.commons.persistence.entity.CategoriaEntity;
-import emma.galzio.goodenergysports.productos.commons.persistence.entity.ImagenProductoEntity;
-import emma.galzio.goodenergysports.productos.commons.persistence.entity.ProductoEntity;
-import emma.galzio.goodenergysports.productos.commons.persistence.entity.TalleEntity;
+import emma.galzio.goodenergysports.productos.commons.persistence.entity.*;
+import emma.galzio.goodenergysports.productos.commons.persistence.filter.ProductoSpecification;
 import emma.galzio.goodenergysports.productos.commons.persistence.repository.CategoriaEntityRepository;
 import emma.galzio.goodenergysports.productos.commons.persistence.repository.ImagenProductoEntityRepository;
 import emma.galzio.goodenergysports.productos.commons.persistence.repository.ProductoRepository;
 import emma.galzio.goodenergysports.productos.commons.persistence.repository.TalleRepository;
+import emma.galzio.goodenergysports.productos.commons.utils.ProductoFilter;
 import emma.galzio.goodenergysports.utils.StorageService;
 import emma.galzio.goodenergysports.utils.exception.DomainException;
 import emma.galzio.goodenergysports.utils.exception.FileStorageException;
@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -78,7 +80,6 @@ public class ProductoAdminService implements IProductoAdminService {
 
     @Value("${goodEnergy.WebResourceDirectory}")
     private String resourcesRootDirectory;
-
     @Autowired
     @Qualifier("productoAdminTransferMapper")
     private TransferMapper<ProductoAdminDto, Producto> productoTransferMapper;
@@ -103,6 +104,10 @@ public class ProductoAdminService implements IProductoAdminService {
     @Autowired
     @Qualifier("imagenProductoEntityMapper")
     private EntityMapper<ImagenProductoEntity, ImagenProducto> imagenProductoEntityMapper;
+    @Autowired
+    private ICategoriaAdminService categoriaAdminService;
+    @Autowired
+    private EntityMapper<CategoriaEntity,Categoria> categoriaEntityMapper;
 
     @Override
     @Transactional
@@ -118,18 +123,21 @@ public class ProductoAdminService implements IProductoAdminService {
         Integer codigo = productoRepository.getLastId();
         producto.setCodigo(codigo != null ? codigo+1 : 1);
         producto.validate();
-
-        StorageService storageService = new StorageService();
-        for(ImagenProducto imagen : producto.getImagenes()){
-            Path path = this.persistImage(imagen, storageService,producto);
-            imagen.setRutaArchivo(path.toAbsolutePath().toString());
+        if(!producto.esDeCategoriaActiva()){
+            DomainException domainException = new DomainException("No es posible registrar un producto en una categoria inactiva");
+            domainException.addCause("CATEGORIA", "La categoria "+producto.getCategoria().getNombre()+" se encuentra inactiva");
+            throw domainException;
         }
-      
         ProductoEntity persistedProductoEntity = productoEntityMapper.mapToEntity(producto);
         List<TalleEntity> tallesDeCategoria = talleRepository.findByCategoria(persistedProductoEntity.getCategoria());
         if(tallesDeCategoria != null && !tallesDeCategoria.isEmpty()) {
             List<Talle> talles = talleCategoriaEntityMapper.mapAllToBusiness(tallesDeCategoria);
             producto.validarStockTallesActivos(talles);
+        }
+        StorageService storageService = new StorageService();
+        for(ImagenProducto imagen : producto.getImagenes()){
+            Path path = this.persistImage(imagen, storageService,producto);
+            imagen.setRutaArchivo(path.toAbsolutePath().toString());
         }
         try{
             persistedProductoEntity = productoRepository
@@ -145,7 +153,6 @@ public class ProductoAdminService implements IProductoAdminService {
     private Path persistImage(ImagenProducto imagenProducto, StorageService storageService, Producto producto){
 
         String extension = imagenProducto.getExtension();
-
         String fileName = producto.getCodigo().toString() +"-"+ imagenProducto.getOrden() + "."+extension;
        return this.persistImage(imagenProducto, storageService, fileName);
     }
@@ -156,7 +163,6 @@ public class ProductoAdminService implements IProductoAdminService {
             domainException.addCause("TIPO_ARCHIVO", StorageService.VALID_IMAGE_EXTENTIONS);
             throw domainException;
         }
-        //String fileName = producto.getCodigo().toString() +"-"+ imagenProducto.getOrden() + "."+extension;
         if(Files.exists(Path.of(resourcesRootDirectory+"/images/producto"+nuevoNombre))){
             throw new FileStorageException("Ya existe almacenada una imagen con el mismo orden para el producto especidicado");
         }
@@ -165,60 +171,41 @@ public class ProductoAdminService implements IProductoAdminService {
 
     @Transactional
     @Override
-    public List<ProductoAdminDto> listAllProductos(boolean active, Integer page, Integer size, ORDER order, Integer categoria){
+    public List<ProductoAdminDto> listAllProductos(boolean active, Integer page, Integer size, ProductoFilter productoFilter){
 
-        Sort sort = Sort.by(Sort.Direction.valueOf(order.getDir()),order.getField());
+        //CAMBIAR E IMPLEMENTAR CON SPECIFICATION
+        Sort sort = Sort.by(Sort.Direction.valueOf(productoFilter.getSort().getDir()),productoFilter.getSort().getField());
         Pageable pageable = PageRequest.of(page-1,size,sort);
-
-        Page<ProductoEntity> result = null;
-
-        if(!active && categoria == null){
-            result = productoRepository.findBy(pageable);
-        }
-        if(active && categoria == null){
-            result = productoRepository.findByFechaBajaIsNull(pageable);
-        }
-        if(!active && categoria != null){
-            CategoriaEntity categoriaEntity;
-            try {
-                categoriaEntity = categoriaEntityRepository.getById(categoria);
-            }catch (Exception e){
-                throw new DomainException("No existe una categoria con el ID especificado");
-            }
-            result = productoRepository.findByCategoria(categoriaEntity,pageable);
-        }
-        if(active && categoria != null){
-            CategoriaEntity categoriaEntity;
-            try {
-                categoriaEntity = categoriaEntityRepository.getById(categoria);
-            }catch (Exception e){
-                throw new DomainException("No existe una categoria con el ID especificado");
-            }
-            result = productoRepository.findByCategoriaAndFechaBajaIsNull(categoriaEntity,pageable);
-        }
-        if(!result.hasContent()){
-            return Collections.emptyList();
-        }
-        List<Producto> productos = productoEntityMapper.mapAllToBusiness(result.getContent());
-
+        Categoria categoria = categoriaAdminService.getCategoriaBusiness(productoFilter.getCategoria());
+        CategoriaEntity categoriaEntity = categoria != null ? categoriaEntityMapper.mapToEntity(categoria) : null;
+        List<String> talles = this.parseTalles(productoFilter.getTalles());
+        Optional<CategoriaEntity> categoriaOptional = Optional.ofNullable(categoriaEntity);
+        Specification<ProductoEntity> productoSpecification = ProductoSpecification
+                .categoriaFilter(categoriaOptional)
+                .and(ProductoSpecification.precioFilter((productoFilter.getPrecioMin() != null ?
+                                        Optional.of(new BigDecimal(productoFilter.getPrecioMin())) :
+                                        Optional.empty()),
+                                (productoFilter.getPrecioMax() != null ?
+                                        Optional.of(new BigDecimal(productoFilter.getPrecioMax())) :
+                                        Optional.empty()))
+                        .and(ProductoSpecification.tallesFilter(Optional.ofNullable(talles),
+                                categoriaOptional)))
+                .and(ProductoSpecification.productosActivos());
+        Page<ProductoEntity> productosEntitiesPage = productoRepository.findAll(productoSpecification,pageable);
+        List<Producto> productos = productoEntityMapper.mapAllToBusiness(productosEntitiesPage.getContent());
         productos.forEach(Producto::validate);
 
         return productoTransferMapper.mapAllToDto(productos);
     }
-/*
-    private Producto findBussinesProduct(Integer codigo){
-        if(codigo == null) throw new NullPointerException("El código debe ser distinto de null");
-
-        try {
-            ProductoEntity productoEntity = productoRepository.getById(codigo);
-            Producto producto = productoEntityMapper.mapToBusiness(productoEntity);
-            producto.validate();
-            return producto;
-        }catch (EntityNotFoundException e){
-            throw new DomainException("No existe un producto con el código especificado: " + codigo );
+    private List<String> parseTalles(String sTalles){
+        if(sTalles == null || sTalles.trim().isEmpty()) return null;
+        String[] sTallesArray = sTalles.trim().split(",");
+        List<String> sTallesList = new LinkedList<>();
+        for(String talle : sTallesArray){
+            sTallesList.add(talle.trim());
         }
-
-    }*/
+        return sTallesList;
+    }
 
     @Override
     public ProductoAdminDto findProducto(Integer codigo) {

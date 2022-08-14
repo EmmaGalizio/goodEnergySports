@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +18,7 @@ import java.security.MessageDigest;
 
 @Configuration
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL_FORMS)
-public class WebConfiguration implements WebMvcConfigurer {
+public class WebConfiguration implements WebMvcConfigurer{
 
     @Value("${goodEnergy.WebResourceDirectory}")
     private String resorucesPath;
@@ -26,9 +27,13 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+
+        //POR QUE PORONGA NO MAPEA LOS RECURSOS ESTATICOS!!!!!!!!!!!!
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         registry
                 .addResourceHandler("/resources/**")
-                .addResourceLocations("file:"+resorucesPath+ File.separator);
+                .addResourceLocations("file:///./home/emmagalzio/Programacion/Programacion/Proyectos/goodEnergySports/code/rest/resources");
     }
 
     @Bean
@@ -42,4 +47,6 @@ public class WebConfiguration implements WebMvcConfigurer {
         byte[] hashedSecretBytes = digest.digest(secret.getBytes(StandardCharsets.UTF_8));
         return Algorithm.HMAC256(hashedSecretBytes);
     }
+
+
 }

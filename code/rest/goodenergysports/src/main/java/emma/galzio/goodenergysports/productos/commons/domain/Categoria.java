@@ -98,7 +98,7 @@ public class Categoria {
     }
     public void registrarBaja(){
        DomainException domainException = null;
-       if(esCategoriaPadre()){
+       if(tieneHijasActivas()){
            domainException = new DomainException();
            domainException.addCause("SUB_CATEGORIAS", "No se puede registrar la baja de una categoria que posea sub categorias activas");
        }
@@ -116,7 +116,7 @@ public class Categoria {
     public boolean esCategoriaHija(){
         return categoriaSuperior != null || (idCategoriaSuperior != null && idCategoriaSuperior >= 0);
     }
-    public boolean esCategoriaPadre(){
+    public boolean tieneHijasActivas(){
 
         if(subCategorias != null){
             for(Categoria subCat: subCategorias){
@@ -126,6 +126,9 @@ public class Categoria {
             }
         }
         return false;
+    }
+    public boolean esCategoriaPadre(){
+        return subCategorias != null && !subCategorias.isEmpty();
     }
 
     public Categoria getCategoriaSuperior() {

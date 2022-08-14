@@ -9,6 +9,7 @@ import emma.galzio.goodenergysports.security.service.PermisosService;
 import emma.galzio.goodenergysports.security.utils.JWTUtils;
 import emma.galzio.goodenergysports.security.utils.mapper.PermisoEntityMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
@@ -55,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-
+        log.info("Comenzando a cargar permisos desde DDBB");
         //Se mapean los permisos a partir de los que están almacenados en la base de datos.
         //Se utiliza como POJO en vez de bean porque se van a utilizar solo una vez, para ahorrar memoria
         PermisoEntityMapper permisoEntityMapper = new PermisoEntityMapper();
